@@ -20,5 +20,5 @@ RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/apache2.conf
-
+ENV APP_KEY=base64:H9gerdbzANC9SY6na6/1wx84bLAfXrjnO/mFEUKUopk=
 EXPOSE 80
