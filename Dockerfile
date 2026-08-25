@@ -15,12 +15,22 @@ COPY . /var/www/html
 
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# ⬇️ ADD THIS LINE ⬇️
+# Create all required directories with proper permissions
+RUN mkdir -p /var/www/html/storage/framework/sessions \
+    && mkdir -p /var/www/html/storage/framework/views \
+    && mkdir -p /var/www/html/storage/framework/cache \
+    && mkdir -p /var/www/html/bootstrap/cache
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage \
+    && chown -R www-data:www-data /var/www/html/bootstrap/cache \
+    && chmod -R 777 /var/www/html/storage \
+    && chmod -R 777 /var/www/html/bootstrap/cache
+
+# Run migrations
 RUN php artisan migrate --force
 
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
+# Configure Apache
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/apache2.conf
 
