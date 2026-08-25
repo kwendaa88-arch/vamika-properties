@@ -15,9 +15,6 @@ COPY . /var/www/html
 
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# ⬇️ ADD THIS LINE ⬇️
-RUN php artisan migrate --force
-
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
