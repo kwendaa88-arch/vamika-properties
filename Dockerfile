@@ -15,7 +15,7 @@ COPY . /var/www/html
 
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# Create directories
+# Create storage directories
 RUN mkdir -p /var/www/html/storage/framework/sessions \
     && mkdir -p /var/www/html/storage/framework/views \
     && mkdir -p /var/www/html/storage/framework/cache \
@@ -27,9 +27,7 @@ RUN chown -R www-data:www-data /var/www/html/storage \
     && chmod -R 777 /var/www/html/storage \
     && chmod -R 777 /var/www/html/bootstrap/cache
 
-# Run all migrations
-RUN php artisan migrate --force
-RUN php artisan session:table
+# Run migrations
 RUN php artisan migrate --force
 
 # Clear cache
