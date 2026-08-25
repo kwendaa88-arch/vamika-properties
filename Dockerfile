@@ -15,7 +15,7 @@ COPY . /var/www/html
 
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# Create all required directories with proper permissions
+# Create directories
 RUN mkdir -p /var/www/html/storage/framework/sessions \
     && mkdir -p /var/www/html/storage/framework/views \
     && mkdir -p /var/www/html/storage/framework/cache \
@@ -27,8 +27,16 @@ RUN chown -R www-data:www-data /var/www/html/storage \
     && chmod -R 777 /var/www/html/storage \
     && chmod -R 777 /var/www/html/bootstrap/cache
 
-# Run migrations
+# Run all migrations
 RUN php artisan migrate --force
+RUN php artisan session:table
+RUN php artisan migrate --force
+
+# Clear cache
+RUN php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan view:clear && \
+    php artisan route:clear
 
 # Configure Apache
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
