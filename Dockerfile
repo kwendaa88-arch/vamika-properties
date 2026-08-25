@@ -15,8 +15,23 @@ COPY . /var/www/html
 
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# ⬇️ ADD THIS LINE ⬇️
+# Create session storage directory
+RUN mkdir -p /var/www/html/storage/framework/sessions && \
+    chmod -R 775 /var/www/html/storage && \
+    chmod -R 775 /var/www/html/storage/framework/sessions
+
+# Run migrations
 RUN php artisan migrate --force
+
+# Create and migrate session table
+RUN php artisan session:table
+RUN php artisan migrate --force
+
+# Clear cache
+RUN php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan view:clear && \
+    php artisan route:clear
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
